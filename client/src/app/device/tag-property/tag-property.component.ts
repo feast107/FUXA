@@ -26,7 +26,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     private subscriptionBrowse: Subscription;
     private subscriptionNodeAttribute: Subscription;
 	private subscriptionDeviceWebApiRequest: Subscription;
-
+    private subscriptionDeviceSignalRRequest: Subscription;
+    
     @ViewChild(TreetableComponent, {static: false}) treetable: TreetableComponent;
 
     constructor(
@@ -36,7 +37,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: any) {
 
         this.tagType = TagType;
-        if (this.isOpcua() || this.isBACnet() || this.isWebApi()) {
+        if (this.isOpcua() || this.isBACnet() || this.isWebApi() || this.isSignalR()) {
             this.dialogType = EditTagDialogType.Tree;
             this.config.height = '640px';
             this.config.width = '1000px';
@@ -114,6 +115,9 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             if (this.subscriptionDeviceWebApiRequest) {
 				this.subscriptionDeviceWebApiRequest.unsubscribe();
 			}
+            if (this.subscriptionDeviceSignalRRequest) {
+                this.subscriptionDeviceSignalRRequest.unsubscribe();
+            }
         } catch (e) {
         }
     }
@@ -360,6 +364,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 		return (this.data.device.type === DeviceType.EthernetIP) ? true : false;
     }
 
+    isSignalR(){
+        return (this.data.device.type === DeviceType.SignalR) ? true : false;
+    }
+
     isServer() {
 		return (this.data.device.type === DeviceType.FuxaServer) ? true : false;
     }
@@ -373,7 +381,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     isValidate() {
         if (this.error) {
             return false;
-        } else if (this.isOpcua() || this.isWebApi()) {
+        } else if (this.isOpcua() || this.isWebApi() || this.isSignalR()) {
             return true;
         } else if (this.isInternal()) {
             return (this.data.tag.name) ? true : false;

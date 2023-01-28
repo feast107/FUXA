@@ -26,9 +26,9 @@
     },
     {
       "name": "Client Chrome localhost",
-      "type": "chrome",
+      "type": "msedge",
       "request": "launch",
-      "url": "http://localhost:4200/#",
+      "url": "http://localhost:1881/#",
       "webRoot": "${workspaceFolder}/client/src"
     },
     {

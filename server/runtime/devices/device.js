@@ -11,6 +11,7 @@ var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
+var SignalRclient = require('./signalr')
 // var TEMPLATEclient = require('./template');
 
 var deviceCloseTimeout = 1000;
@@ -62,6 +63,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = MQTTclient.create(data, logger, events, manager);        
+    }else if (data.type === DeviceEnum.SignalR){
+        if(!SignalRclient){
+            return null;
+        }
+        comm = SignalRclient.create(data,logger,events,manager);
     } else if (data.type === DeviceEnum.EthernetIP) {
         if (!EthernetIPclient) {
             return null;
@@ -246,6 +252,12 @@ function Device(data, runtime) {
                 }).catch(function (err) {
                     reject(err);
                 });
+            }else if (data.type === DeviceEnum.SignalR){
+                comm.browse(path,callback).then((result) => {
+                    resolve(result);
+                }).catch((err) => {
+                    reject(err);
+                })
             } else {
                 reject('Browse not supported!');
             }
@@ -406,6 +418,8 @@ function loadPlugin(type, module) {
         HTTPclient = require(module);
     } else if (type === DeviceEnum.MQTTclient) {
         MQTTclient = require(module);
+    }else if( type === DeviceEnum.SignalR){
+        SignalRclient = reqiure(module);
     } else if (type === DeviceEnum.EthernetIP) {
         EthernetIPclient = require(module);
     } else if (type === DeviceEnum.FuxaServer) {
@@ -443,6 +457,7 @@ var DeviceEnum = {
     BACnet: 'BACnet',
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
+    SignalR : 'SignalR',
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
     // Template: 'template'

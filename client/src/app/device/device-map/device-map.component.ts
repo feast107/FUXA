@@ -141,6 +141,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                 });
             }, error => {
             });
+            this.plugins.push(DeviceType.SignalR); 
             this.plugins.push(DeviceType.WebAPI);
             this.plugins.push(DeviceType.MQTTclient);
             this.plugins.push(DeviceType.internal);
@@ -487,18 +488,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         delete device.property;
                     }
                     if (device.property && tempdevice.property) {
-                        device.property.address = tempdevice.property.address;
-                        device.property.port = parseInt(tempdevice.property.port);
-                        device.property.slot = parseInt(tempdevice.property.slot);
-                        device.property.rack = parseInt(tempdevice.property.rack);
-                        device.property.slaveid = tempdevice.property.slaveid;
-                        device.property.baudrate = tempdevice.property.baudrate;
-                        device.property.databits = tempdevice.property.databits;
-                        device.property.stopbits = tempdevice.property.stopbits;
-                        device.property.parity = tempdevice.property.parity;
-                        device.property.options = tempdevice.property.options;
-                        device.property.method = tempdevice.property.method;
-                        device.property.format = tempdevice.property.format;
+                        this.copyRequiredProperty(device.property,tempdevice.property);
                     }
                     this.projectService.setDevice(device, olddevice, result.security);
                 }
@@ -525,5 +515,22 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     flows(): Device[] {
         return <Device[]>Object.values(this.devices).filter((d: Device) => d.type === DeviceType.WebAPI);
+    }
+
+    copyRequiredProperty(srcProperty: any,fromProperty: any){
+        srcProperty.address = fromProperty.address;
+        srcProperty.port = parseInt(fromProperty.port);
+        srcProperty.slot = parseInt(fromProperty.slot);
+        srcProperty.rack = parseInt(fromProperty.rack);
+        srcProperty.slaveid = fromProperty.slaveid;
+        srcProperty.baudrate = fromProperty.baudrate;
+        srcProperty.databits = fromProperty.databits;
+        srcProperty.stopbits = fromProperty.stopbits;
+        srcProperty.parity = fromProperty.parity;
+        srcProperty.options = fromProperty.options;
+        srcProperty.method = fromProperty.method;
+        srcProperty.format = fromProperty.format;
+        srcProperty.invocation = fromProperty.invocation;
+        srcProperty.delegate = fromProperty.delegate;
     }
 }

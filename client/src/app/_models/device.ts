@@ -26,7 +26,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | SignalR | internal | EthernetIP',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -173,8 +173,9 @@ export enum DeviceType {
     ModbusTCP = 'ModbusTCP',
     WebAPI = 'WebAPI',
     MQTTclient = 'MQTTclient',
+    SignalR = 'SignalR',
     internal = 'internal',
-    EthernetIP = 'EthernetIP'
+    EthernetIP = 'EthernetIP',
     // Template: 'template'
 }
 

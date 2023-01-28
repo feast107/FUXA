@@ -49,6 +49,7 @@ import { DevicePropertyComponent } from './device/device-property/device-propert
 import { TagPropertyComponent } from './device/tag-property/tag-property.component';
 import { TagOptionsComponent } from './device/tag-options/tag-options.component';
 import { TopicPropertyComponent } from './device/topic-property/topic-property.component';
+import { HubPropertyComponent } from './device/hub-property/hub-property.component';
 import { DeviceListComponent, DialogTagName } from './device/device-list/device-list.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
@@ -180,6 +181,7 @@ export function createTranslateLoader(http: HttpClient) {
         TagPropertyComponent,
         TagOptionsComponent,
         TopicPropertyComponent,
+        HubPropertyComponent,
         DevicePropertyComponent,
         DeviceWebapiPropertyDialogComponent,
         LayoutPropertyComponent,
@@ -376,6 +378,7 @@ export function createTranslateLoader(http: HttpClient) {
         DeviceWebapiPropertyDialogComponent,
         TagPropertyComponent,
         TopicPropertyComponent,
+        HubPropertyComponent,
         ConfirmDialogComponent,
         EditNameComponent,
         LayoutPropertyComponent,

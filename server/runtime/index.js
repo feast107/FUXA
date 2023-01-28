@@ -222,6 +222,13 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 logger.error(`${Events.IoEventTypes.HOST_INTERFACES}: ${err}`);
             }
         });
+        socket.on(Events.IoEventTypes.DEVICE_SIGNALR_REQUEST,(message) => {
+            try{
+                debugger;
+            }catch(err){
+                logger.error(`${Events.IoEventTypes.DEVICE_SIGNALR_REQUEST}: ${err}`);
+            }
+        });
         // client ask device webapi request and return result
         socket.on(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
             try {

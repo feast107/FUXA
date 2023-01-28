@@ -8,6 +8,7 @@ import { HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
 import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy } from './../../_models/device';
+import { logging } from 'protractor';
 
 @Component({
 	selector: 'app-device-property',
@@ -161,7 +162,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			}
 			this.propertyLoading = false;
 		});
-
 		this.onDeviceTypeChanged();
 		// this.hmiService.askHostInterface();
 	}
@@ -201,6 +201,12 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		this.hmiService.askWebApiProperty(this.data.device.property);
 	}
 
+	onCheckSignalR(){
+		this.propertyLoading = true;
+        this.result = '';
+		this.hmiService.askSignalRProperty(this.data.device.property);
+	}
+	
 	// onCheckBACnetDevice() {
 	// 	this.propertyLoading = true;
 	// 	this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);

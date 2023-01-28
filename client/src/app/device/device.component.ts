@@ -290,6 +290,7 @@ export class DeviceTagDialog implements OnInit, AfterViewInit {
     }
 
     onOkClick(): void {
+        debugger;
         this.data.variableId = null;
         this.data.variablesId = [];
         this.dataSource.data.forEach(e => {

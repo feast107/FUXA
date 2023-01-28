@@ -1,0 +1,59 @@
+<div style="width: 100%;position: relative;">
+    <div style="width: 840px;">
+        <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
+            {{'device.browsehubs-property-title' | translate}}
+        </h1>
+        <mat-icon (click)="onNoClick()"
+            style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+        <mat-tab-group style="width: 100%; height: 100%" #grptabs>
+            <mat-tab label="{{'device.browsehubs-property-conf' | translate}}" #tabpub>
+                <div style="display: block;margin-top: 10px">
+                    <div class="my-form-field" style="display:block; margin-right: 10px;margin-bottom: 10px;">
+                        <span>{{'device.hub-invoke-method' | translate}}</span>
+                        <input [(ngModel)]="invokeHubMethod" style="width: 400px;" type="text">
+                        <button style="float: right;margin-left: 20px" mat-raised-button (click)="onTriggerInvoke()"
+                            [disabled]="!isInvokeInvalid()" color="primary">{{'device.hub-invoke' | translate}}
+                        </button>
+                    </div>
+                    <div class="my-form-field" style="display: block;">
+                        <button mat-icon-button (click)="onAddInvokeArg()">
+                            <mat-icon>add_circle_outline</mat-icon>
+                            {{'device.hub-invoke-add-arg' | translate}}
+                        </button>
+                        <div
+                            style="height: 200px; border: 1px solid var(--formBorder); padding: 5px 5px 3px 8px; overflow: auto;margin-bottom: 10px;">
+                            <div *ngFor="let item of invokeArgs.arguments; index as i" class="item">
+                                <div class="my-form-field" style="margin-right: 10px;">
+                                    <span>{{'device.hub-invoke-arg' | translate}}</span>
+                                    <input [(ngModel)]="item.value" (keyup)="stringifyInvokeArgument()"
+                                        style="width: 300px;" type="text">
+                                </div>
+                                <div class="my-form-field" style="width: 120px;margin-right: 16px;">
+                                    <span>{{'device.topic-publish-type' | translate}}</span>
+                                    <mat-select [(value)]="item.type" (selectionChange)="stringifyInvokeArgument();onItemTypeChanged(item);">
+                                        <mat-option *ngFor="let type of itemType | enumToArray" [value]="type.key">
+                                            {{ type.value }}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                                <div style="float: right;padding-top: 5px;">
+                                    <button mat-icon-button (click)="onRemoveInvokeArg(i)" class="remove">
+                                        <mat-icon>clear</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="my-form-field" style="display:inline-block; width: 826px">
+                            <span>{{'device.hub-publish-content' | translate}}</span>
+                            <div class="hub-publish-result" [innerHTML]="payloadResult">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.close' | translate}}</button>
+    </div>
+</div>

@@ -10,6 +10,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
+import { HubPropertyComponent } from '../hub-property/hub-property.component';
 import { TagPropertyComponent } from './../tag-property/tag-property.component';
 import { ITagOption, TagOptionsComponent } from './../tag-options/tag-options.component';
 import { TopicPropertyComponent } from './../topic-property/topic-property.component';
@@ -181,6 +182,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     onEditRow(row) {
         if (this.deviceSelected.type === DeviceType.MQTTclient) {
             this.editTopics(row);
+        } else if(this.deviceSelected.type === DeviceType.SignalR){
+            this.editHubs(row);
         } else {
             this.editTag(row, false);
         }
@@ -192,10 +195,14 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     onAddTag() {
-        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
+        if (this.deviceSelected.type === DeviceType.OPCUA 
+            || this.deviceSelected.type === DeviceType.BACnet 
+            || this.deviceSelected.type === DeviceType.WebAPI) {
             this.addOpcTags(null);
         } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
             this.editTopics();
+        } else if (this.deviceSelected.type === DeviceType.SignalR){
+            this.editHubs();
         } else {
             let tag = new Tag(Utils.getGUID(TAG_PREFIX));
             this.editTag(tag, true);
@@ -238,7 +245,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     getTagLabel(tag: Tag) {
-        if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
+        if (this.deviceSelected.type === DeviceType.BACnet 
+            || this.deviceSelected.type === DeviceType.WebAPI) {
             return tag.label || tag.name;
         } else if (this.deviceSelected.type === DeviceType.OPCUA) {
             return tag.label;
@@ -251,7 +259,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (!tag.address) {
             return '';
         }
-        if (this.deviceSelected.type === DeviceType.ModbusRTU || this.deviceSelected.type === DeviceType.ModbusTCP) {
+        if (this.deviceSelected.type === DeviceType.ModbusRTU 
+            || this.deviceSelected.type === DeviceType.ModbusTCP) {
             return parseInt(tag.address) + parseInt(tag.memaddress);
         } else if (this.deviceSelected.type === DeviceType.WebAPI) {
             if (tag.options) {
@@ -268,8 +277,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     isToEdit(type, tag: Tag) {
-        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
-            type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer) {
+        if (type === DeviceType.SiemensS7 
+            || type === DeviceType.ModbusTCP 
+            || type === DeviceType.ModbusRTU 
+            || type === DeviceType.internal 
+            || type === DeviceType.EthernetIP 
+            || type === DeviceType.FuxaServer
+            || type === DeviceType.SignalR) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -404,6 +418,37 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
         }
     }
+
+    editHubs(hub:Tag = null){
+        if(hub && hub.options){
+            // edit only name (subscription)
+            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (t.id !== hub.id) {return t;} }).map((t: Tag) => t.name);
+            let dialogRef = this.dialog.open(DialogTagName, {
+                position: { top: '60px' },
+                data: { name: hub.name, exist: existNames }
+            });
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    this.deviceSelected.tags[hub.id].name = result.name;
+                    this.tagsMap[hub.id].name = result.name;
+                    this.bindToTable(this.deviceSelected.tags);
+                    this.projectService.setDeviceTags(this.deviceSelected);
+                }
+            });
+        }else{
+            // edit new hub or publish
+            let dialogRef = this.dialog.open(HubPropertyComponent, {
+                panelClass: 'dialog-property',
+                data: { device: this.deviceSelected, devices: Object.values(this.devices), hub: hub },
+                position: { top: '60px' }
+            });
+            dialogRef.componentInstance.listen = (oldHub, newHub) => this.addTopicSubscription(oldHub, newHub);
+            dialogRef.componentInstance.invoke = (oldHub, newHub) => this.addTopicToPublish(oldHub, newHub);
+            dialogRef.afterClosed().subscribe(result => {
+            });
+        }
+    }
+
 
     private addTopicSubscription(oldTopic: Tag, topics: Tag[]) {
         if (topics) {

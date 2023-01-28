@@ -10,6 +10,7 @@ import { EndPointApi } from '../_helpers/endpointapi';
 import { Utils } from '../_helpers/utils';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { emit } from 'process';
 
 @Injectable()
 export class HmiService {
@@ -23,6 +24,7 @@ export class HmiService {
     @Output() onHostInterfaces: EventEmitter<any> = new EventEmitter();
     @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceWebApiRequest: EventEmitter<any> = new EventEmitter();
+    @Output() onDeviceSignalRRequest: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceTagsRequest: EventEmitter<any> = new EventEmitter();
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
@@ -203,6 +205,9 @@ export class HmiService {
             this.socket.on(IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
                 this.onDeviceWebApiRequest.emit(message);
             });
+            this.socket.on(IoEventTypes.DEVICE_SIGNALR_REQUEST,(message) =>{
+                this.onDeviceSignalRRequest.emit(message);
+            });
             this.socket.on(IoEventTypes.DEVICE_TAGS_REQUEST, (message) => {
                 this.onDeviceTagsRequest.emit(message);
             });
@@ -245,6 +250,16 @@ export class HmiService {
         if (this.socket) {
             let msg = { property: property };
             this.socket.emit(IoEventTypes.DEVICE_WEBAPI_REQUEST, msg);
+        }
+    }
+
+    /**
+     * Ask device signalr result to test
+     * @param property 
+     */
+    public askSignalRProperty(property){
+        if(this.socket){
+            this.socket.emit(IoEventTypes.DEVICE_SIGNALR_REQUEST,{ property : property});
         }
     }
 
@@ -556,6 +571,7 @@ export enum IoEventTypes {
     DEVICE_NODE_ATTRIBUTE = 'device-node-attribute',
     DEVICE_WEBAPI_REQUEST = 'device-webapi-request',
     DEVICE_TAGS_REQUEST = 'device-tags-request',
+    DEVICE_SIGNALR_REQUEST = 'device-signalr-request',
     DAQ_QUERY = 'daq-query',
     DAQ_RESULT = 'daq-result',
     DAQ_ERROR = 'daq-error',
